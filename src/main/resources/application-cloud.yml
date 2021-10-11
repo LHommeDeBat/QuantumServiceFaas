@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:db2://${IBM_DB2_HOST}:${IBM_DB2_PORT}/${IBM_DB2_DATABASE}
+    username: ${IBM_DB2_USERNAME}
+    password: ${IBM_DB2_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update

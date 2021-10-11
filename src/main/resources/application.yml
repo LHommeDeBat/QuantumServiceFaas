@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:8000}
+
+spring:
+  application:
+    name: QuantumService
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  jms:
+    pub-sub-domain: true
+
+ibmq:
+  apiHost: https://api.quantum-computing.ibm.com/v2
+  apiToken: ${IBMQ_API_TOKEN}
