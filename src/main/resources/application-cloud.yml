@@ -7,3 +7,11 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+
+ibm:
+  mq:
+    queueManager: ${IBM_MQ_QUEUE_MANAGER}
+    channel: ${IBM_MQ_QUEUE_CHANNEL}
+    connName: ${IBM_MQ_QUEUE_CONNECTION_ADDRESS}
+    user: ${IBM_MQ_QUEUE_USERNAME}
+    password: ${IBM_MQ_QUEUE_PASSWORD}
