@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  quantumservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: quantumservice
+    ports:
+      - "9010:9010"
+    depends_on:
+      - mysql
+      - mqseries
+    container_name: quantumservice
+    environment:
+      - IBMQ_API_TOKEN=!!!{yourApiToken}!!!
+      - SERVER_PORT=9010
+    hostname: quantumservice
+    networks:
+      - quantumservicenetwork
+
+  mysql:
+    image: mysql
+    ports:
+      - "9025:3306"
+      - "33060:33060"
+    container_name: quantumservicedb
+    hostname: quantumservicedb
+    networks:
+      - quantumservicenetwork
+    volumes:
+      - !!!{yourLocalFolder}!!!:/var/lib/mysql
+    environment:
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - GOSU_VERSION=1.7
+      - MYSQL_MAJOR=8.0
+      - MYSQL_VERSION=8.0.16-2debian9
+      - MYSQL_ROOT_PASSWORD=root
+
+  mqseries:
+    image: ibmcom/mq:latest
+    ports:
+      - "1414:1414"
+      - "9443:9443"
+    hostname: quantumservicemq
+    environment:
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
+    container_name: quantumservicemq
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - quantumservicenetwork
+
+networks:
+  quantumservicenetwork:
+    name: quantumservicenetwork

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:mysql://quantumservicedb:3306/quantum_service_faas_db?verifyServerCertificate=false&useSSL=true&createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+ibm:
+  mq:
+    queueManager: QM1
+    channel: DEV.ADMIN.SVRCONN
+    connName: quantumservicemq(1414)
+    user: admin
+    password: passw0rd
