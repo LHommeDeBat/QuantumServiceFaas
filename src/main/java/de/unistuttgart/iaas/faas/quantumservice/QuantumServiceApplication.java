@@ -2,7 +2,6 @@ package de.unistuttgart.iaas.faas.quantumservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.jms.annotation.EnableJms;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -10,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * It starts a embedded tomcat and deploys the application to listen to the configured port.
  */
 @EnableScheduling
-@EnableJms
 @SpringBootApplication
 public class QuantumServiceApplication {
 

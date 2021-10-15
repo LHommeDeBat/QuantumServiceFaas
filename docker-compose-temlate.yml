@@ -7,14 +7,14 @@ services:
       dockerfile: Dockerfile
     image: quantumservice
     ports:
-      - "9010:9010"
+      - "8000:8000"
     depends_on:
       - mysql
       - mqseries
     container_name: quantumservice
     environment:
       - IBMQ_API_TOKEN=!!!{yourApiToken}!!!
-      - SERVER_PORT=9010
+      - SERVER_PORT=8000
     hostname: quantumservice
     networks:
       - quantumservicenetwork
