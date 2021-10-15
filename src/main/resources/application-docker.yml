@@ -17,7 +17,7 @@ ibm:
     channel: ${IBM_MQ_CHANNEL:DEV.ADMIN.SVRCONN}
     host: ${IBM_MQ_HOST:quantumservicemq}
     port: ${IBM_MQ_PORT:1414}
-    user: ${IBM_MQ_USER:user}
+    user: ${IBM_MQ_USER:admin}
     password: ${IBM_MQ_PASSWORD:passw0rd}
 
 messaging:
