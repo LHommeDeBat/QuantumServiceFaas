@@ -62,7 +62,7 @@ public class QuantumApplicationService {
             quantumApplication.setProvider(providerService.findByName(providerName));
             quantumApplication.setCode(Base64.encodeBase64String(file.getBytes()));
             if (Objects.isNull(dockerImage)) {
-                dockerImage = "sykes360gtx/custom-python:qiskit-test-2";
+                dockerImage = "sykes360gtx/python-qiskit:latest";
             }
             quantumApplication.setDockerImage(dockerImage);
             quantumApplication.setNotificationAddress(notificationAddress);
