@@ -18,5 +18,5 @@ ibm:
     password: passw0rd
 
 messaging:
-  enabled: true
+  enabled: false
   eventQueue: DEV.QUEUE.1
