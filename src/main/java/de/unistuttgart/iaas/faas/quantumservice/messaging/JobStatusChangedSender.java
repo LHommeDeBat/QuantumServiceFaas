@@ -8,6 +8,7 @@ import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventP
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventType;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.job.Job;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.job.JobStatus;
+import de.unistuttgart.iaas.faas.quantumservice.model.exception.OpenWhiskException;
 import de.unistuttgart.iaas.faas.quantumservice.service.EventTriggerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,10 @@ public class JobStatusChangedSender {
         eventPayload.addAdditionalProperty("quantumApplicationName", job.getQuantumApplication().getName());
         eventPayload.addEventPayloadProperties("device", job.getDevice());
         eventPayload.addEventPayloadProperties("result", job.getResult().toString());
-        eventTriggerService.emitEvent(eventPayload);
+        try {
+            eventTriggerService.emitEvent(eventPayload);
+        } catch (OpenWhiskException e) {
+            log.warn("OpenWhisk error occurred! Maybe some trigger was invoked that does not have any registered actions");
+        }
     }
 }

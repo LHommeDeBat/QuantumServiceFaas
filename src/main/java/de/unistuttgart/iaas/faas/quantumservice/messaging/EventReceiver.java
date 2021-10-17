@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.iaas.faas.quantumservice.configuration.IBMQProperties;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventPayload;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventTrigger;
+import de.unistuttgart.iaas.faas.quantumservice.model.exception.OpenWhiskException;
 import de.unistuttgart.iaas.faas.quantumservice.service.EventTriggerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ public class EventReceiver implements MessageListener {
                 }
             } catch (JMSException | JsonProcessingException e) {
                 log.error("Could not understand message");
+            } catch (OpenWhiskException e) {
+                log.warn("OpenWhisk error occurred! Maybe some trigger was invoked that does not have any registered actions");
             }
 
         }

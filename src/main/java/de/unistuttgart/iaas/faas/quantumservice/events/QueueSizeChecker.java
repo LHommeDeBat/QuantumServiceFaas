@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventPayload;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventType;
+import de.unistuttgart.iaas.faas.quantumservice.model.exception.OpenWhiskException;
 import de.unistuttgart.iaas.faas.quantumservice.model.ibmq.Device;
 import de.unistuttgart.iaas.faas.quantumservice.model.ibmq.Group;
 import de.unistuttgart.iaas.faas.quantumservice.model.ibmq.Hub;
@@ -38,13 +39,13 @@ public class QueueSizeChecker {
         try {
             List<Hub> hubs = ibmqClient.getNetworks();
             // Get Devices and their Queue-Status
-            for (Hub hub: hubs) {
+            for (Hub hub : hubs) {
                 String hubName = hub.getName();
-                for (Group group: hub.getGroups().values()) {
+                for (Group group : hub.getGroups().values()) {
                     String groupName = group.getName();
-                    for (Project project: group.getProjects().values()) {
+                    for (Project project : group.getProjects().values()) {
                         String projectName = project.getName();
-                        for (Device device: project.getDevices().values()) {
+                        for (Device device : project.getDevices().values()) {
                             String deviceName = device.getName();
                             // Get QueueStatus of device
                             QueueStatus queueStatus = ibmqClient.getQueueStatus(deviceName, hubName, groupName, projectName);
@@ -63,6 +64,8 @@ public class QueueSizeChecker {
                 }
             }
             log.info("QueueSize-Polling-Iteration ended at {}", ZonedDateTime.now());
+        } catch (OpenWhiskException e) {
+            log.warn("OpenWhisk error occurred! Maybe some trigger was invoked that does not have any registered actions");
         } catch (Exception e) {
             log.error("Something went wrong accessing the IBMQ-API!", e);
         }
