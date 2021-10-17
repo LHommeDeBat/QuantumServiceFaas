@@ -2,7 +2,7 @@
 
 The QuantumService enables users to register and configure their quantum applications to be automatically executed by specific events. For that, users can register any OpenWhisk-powered FaaS-service as a so called "Provider", where the quantum applications can be deployed and automatically executed by the system. The system currently only works with IBM Quantums offering of quantum computers, meaning all quantum applications need to be python-functions that are written with the SDK "Qiskit".
 
-## How to run
+## Usage Instructions
 
 The QuantumService can be run by using Docker. For that, a docker-compose-template.yml has been prepared. To run the application the following steps can be performed:
 
