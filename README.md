@@ -14,7 +14,15 @@ The QuantumService can be run by using Docker. For that, a docker-compose-templa
 
 ## Usage of Providers
 
-The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "Provider". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a Provider. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a provider. To create/register a new provider perform a POST-Request to: {{YOUR-HOST}}/providers (example: http://localhost:8000/providers) with body
+The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "Provider". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a Provider. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a provider. 
+
+To create/register a new provider perform a POST-Request to: 
+
+{{YOUR-HOST}}/providers 
+
+(example: http://localhost:8000/providers) 
+
+with body
 
 ``` json
 {
@@ -169,7 +177,13 @@ Example Result:
 
 ### Registration and Deployment of quantum applications
 
-To register and deploy a quantum application a Multipart-POST-Request needs to be performed to: {{YOUR-HOST}}/quantum-applications (example: http://localhost:8000/quantum-applications) with parts:
+To register and deploy a quantum application a Multipart-POST-Request needs to be performed to: 
+
+{{YOUR-HOST}}/quantum-applications 
+
+(example: http://localhost:8000/quantum-applications) 
+
+with parts:
 
 - **file** Python-File that follows structure requirements
 - **name** Unique name of your quantum application
@@ -189,7 +203,13 @@ The QuantumService uses the IBM Quantum API to provide two kinds of event feeds 
 
 ### Event-Triggers
 
-Event triggers are fired if some event occurs. They can be configured to only fire if a event meets specific requirements. To create event triggers a post requests needs to be performed to: {{YOUR-HOST}}/event-triggers?providerName={{yourProviderName}} (example: http://localhost:8000/event-triggers?providerName=NameOfMyProvider) with body
+Event triggers are fired if some event occurs. They can be configured to only fire if a event meets specific requirements. To create event triggers a post requests needs to be performed to: 
+
+{{YOUR-HOST}}/event-triggers?providerName={{yourProviderName}} 
+
+(example: http://localhost:8000/event-triggers?providerName=NameOfMyProvider) 
+
+with body
 
 ``` json
 {
@@ -227,7 +247,15 @@ for event triggers that are triggered by QueueSize-Events with:
 ### (De)-Register Quantum Applications to Event-Feeds
 
 To register a quantum application to a feed, the user has to link it with a event trigger (QueueSizeEventTrigger or ExecutionResultEventTrigger).
-For that a POST-Request needs to be performed to {{YOUR-HOST}}/event-triggers/{{MyTriggerName}}/quantum-applications/{{MyQuantumApplicationName}} (example: http://localhost:8000/event-triggers/MyQueueSizeEventTrigger/quantum-applications/MyQuantumApplication)
+For that a POST-Request needs to be performed to:
+
+{{YOUR-HOST}}/event-triggers/{{MyTriggerName}}/quantum-applications/{{MyQuantumApplicationName}} 
+
+(example: http://localhost:8000/event-triggers/MyQueueSizeEventTrigger/quantum-applications/MyQuantumApplication)
 
 To deregister quantum application from a feed, the user has to unlink it from a event trigger (QueueSizeEventTrigger or ExecutionResultEventTrigger).
-For that a DELETE-Request needs to be performed to {{YOUR-HOST}}/event-triggers/{{MyTriggerName}}/quantum-applications/{{MyQuantumApplicationName}} (example: http://localhost:8000/event-triggers/MyQueueSizeEventTrigger/quantum-applications/MyQuantumApplication) 
+For that a DELETE-Request needs to be performed to:
+
+{{YOUR-HOST}}/event-triggers/{{MyTriggerName}}/quantum-applications/{{MyQuantumApplicationName}} 
+
+(example: http://localhost:8000/event-triggers/MyQueueSizeEventTrigger/quantum-applications/MyQuantumApplication) 
