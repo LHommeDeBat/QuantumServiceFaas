@@ -1,6 +1,6 @@
 # QuantumService
 
-The QuantumService enables users to register and configure their quantum applications to be automatically executed by specific events. For that, users can register any OpenWhisk-powered FaaS-service as a so called "Provider", where the quantum applications can be deployed and automatically executed by the system. The system currently only works with IBM Quantums offering of quantum computers, meaning all quantum applications need to be python-functions that are written with the SDK "Qiskit".
+The QuantumService enables users to register and configure their quantum applications to be automatically executed by specific events. For that, users can register any OpenWhisk-powered FaaS-service as a so called "OpenWhiskService", where the quantum applications can be deployed and automatically executed by the system. The system currently only works with IBM Quantums offering of quantum computers, meaning all quantum applications need to be python-functions that are written with the SDK "Qiskit".
 
 ## Usage Instructions
 
@@ -12,21 +12,22 @@ The QuantumService can be run by using Docker. For that, a docker-compose-templa
 4. Run "docker-compose up -d". That will start the QuantumService with the default configuration in a docker container using the Spring-Profile "docker" (for individual configuration check application.yml and application-docker.yml and change default values or add appropriate environment variables to docker-compose)
 5. To interact with the system use SwaggerUI by accessing "{host}:{port}/swagger-ui/" in the browser or use [QuantumServiceUI](https://github.com/LHommeDeBat/QuantumServiceUI)
 
-## Usage of Providers
+## Usage of OpenWhiskServices
 
-The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "Provider". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a Provider. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a openWhiskService. 
 
-To create/register a new openWhiskService perform a POST-Request to: 
+The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "OpenWhiskService". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a OpenWhiskService. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a OpenWhiskService. 
 
-{{YOUR-HOST}}/providers 
+To create/register a new OpenWhiskService perform a POST-Request to:
 
-(example: http://localhost:8000/providers) 
+{{YOUR-HOST}}/openwhisk-services 
+
+(example: http://localhost:8000/openwhisk-services) 
 
 with body
 
 ``` json
 {
-    "name": "MyUniqueProviderName",
+    "name": "MyUniqueOpenWhiskServiceName",
     "basicCredentials": "username:password",
     "baseUrl": "https://eu-gb.functions.cloud.ibm.com/api/v1",
     "namespace": "MyUniqueNamespace"
@@ -34,12 +35,13 @@ with body
 ```
 
 with:
-- name: Unique name of your openWhiskService
+
+- name: Unique name of your OpenWhiskService
 - basicCredentials: username and password of your OpenWhisk/CloudFunctions-Namespace seperated by a ":"
 - baseUrl: Base-URL for your OpenWhisk-Server/CloudFunctions
 - namespace: Your unique namespace within your OpenWhisk-Server/CloudFunctions
 
-After you have created your Provider you can start adding QuantumApplications or EventTriggers which will automatically create appropriate Actions, Triggers and Rules within your custom Provider (OpenWhisk-Server-/CloudFunctions-Namespace)
+After you have created your OpenWhiskService you can start adding QuantumApplications or EventTriggers which will automatically create appropriate Actions, Triggers and Rules within your custom OpenWhiskService (OpenWhisk-Server-/CloudFunctions-Namespace)
 
 ## Registration/Deployment/Execution of quantum applications
 
@@ -188,9 +190,9 @@ with parts:
 - **file** Python-File that follows structure requirements
 - **name** Unique name of your quantum application
 - **dockerImage** (optional) Name of a docker image that contains the necessary runtime to execute your quantum application. By default a python runtime with pre-installed qiskit is used
-- **providerName** Name of an existung openWhiskService that should be used for deployment of the quantum-application as an Action
+- **openWhiskServiceName** Name of an existung OpenWhiskService that should be used for deployment of the quantum-application as an Action
 
-The quantum applicaton will be automatically deployed as an action to the submitted Provider (your OpenWhisk-Server-/CloudFunctions-Namespace).
+The quantum applicaton will be automatically deployed as an action to the submitted OpenWhiskService (your OpenWhisk-Server-/CloudFunctions-Namespace).
 
 ## Event-Feeds and Event-Triggers
 
@@ -205,9 +207,9 @@ The QuantumService uses the IBM Quantum API to provide two kinds of event feeds 
 
 Event triggers are fired if some event occurs. They can be configured to only fire if a event meets specific requirements. To create event triggers a post requests needs to be performed to: 
 
-{{YOUR-HOST}}/event-triggers?providerName={{yourProviderName}} 
+{{YOUR-HOST}}/event-triggers?openWhiskServiceName={{yourOpenWhiskServiceName}} 
 
-(example: http://localhost:8000/event-triggers?providerName=NameOfMyProvider) 
+(example: http://localhost:8000/event-triggers?openWhiskServiceName=NameOfMyOpenWhiskService) 
 
 with body
 
