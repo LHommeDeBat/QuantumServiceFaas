@@ -11,7 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import de.unistuttgart.iaas.faas.quantumservice.model.entity.provider.Provider;
+import de.unistuttgart.iaas.faas.quantumservice.model.entity.openwhiskservice.OpenWhiskService;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.HasId;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.quantumapplication.QuantumApplication;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class EventTrigger extends HasId {
     private String name;
 
     @ManyToOne
-    private Provider provider;
+    private OpenWhiskService openWhiskService;
 
     @ManyToMany(cascade = CascadeType.MERGE)
     private Set<QuantumApplication> quantumApplications = new HashSet<>();

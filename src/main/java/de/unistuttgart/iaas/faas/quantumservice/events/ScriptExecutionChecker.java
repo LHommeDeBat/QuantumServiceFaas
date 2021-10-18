@@ -47,7 +47,7 @@ public class ScriptExecutionChecker {
             log.info("Found {} running script executions", runningScriptExecutions.size());
             for (ScriptExecution scriptExecution : runningScriptExecutions) {
                 // Poll activation from openWhisk
-                OpenWhiskActivation openWhiskActivation = openWhiskClient.getActivation(scriptExecution.getProvider(), scriptExecution.getActivationId());
+                OpenWhiskActivation openWhiskActivation = openWhiskClient.getActivation(scriptExecution.getOpenWhiskService(), scriptExecution.getActivationId());
                 if (!Objects.isNull(openWhiskActivation)) {
                     // Update ScriptExecution
                     scriptExecution.setStatus(openWhiskActivation.getResponse().getSuccess() ? ExecutionStatus.SUCCESS : ExecutionStatus.ERROR);

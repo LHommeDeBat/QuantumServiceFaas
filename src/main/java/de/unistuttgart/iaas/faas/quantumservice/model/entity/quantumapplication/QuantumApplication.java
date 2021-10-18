@@ -15,7 +15,7 @@ import de.unistuttgart.iaas.faas.quantumservice.model.entity.HasId;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventTrigger;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.scriptexecution.ScriptExecution;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.job.Job;
-import de.unistuttgart.iaas.faas.quantumservice.model.entity.provider.Provider;
+import de.unistuttgart.iaas.faas.quantumservice.model.entity.openwhiskservice.OpenWhiskService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +38,7 @@ public class QuantumApplication extends HasId {
     private String notificationAddress;
 
     @ManyToOne
-    private Provider provider;
+    private OpenWhiskService openWhiskService;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScriptExecution> scriptExecutions = new HashSet<>();

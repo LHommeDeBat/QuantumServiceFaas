@@ -41,8 +41,8 @@ public class EventTriggerController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<EntityModel<EventTriggerDto>> createEventTrigger(@Validated @RequestBody EventTriggerDto dto, @RequestParam String providerName) {
-        EventTrigger createdEventTrigger = service.createEventTrigger(ModelMapperUtils.convert(dto, EventTrigger.class), providerName);
+    public ResponseEntity<EntityModel<EventTriggerDto>> createEventTrigger(@Validated @RequestBody EventTriggerDto dto, @RequestParam String openWhiskServiceName) {
+        EventTrigger createdEventTrigger = service.createEventTrigger(ModelMapperUtils.convert(dto, EventTrigger.class), openWhiskServiceName);
         return new ResponseEntity<>(linkAssembler.toModel(createdEventTrigger, EventTriggerDto.class), HttpStatus.CREATED);
     }
 

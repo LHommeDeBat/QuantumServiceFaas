@@ -14,9 +14,9 @@ The QuantumService can be run by using Docker. For that, a docker-compose-templa
 
 ## Usage of Providers
 
-The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "Provider". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a Provider. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a provider. 
+The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "Provider". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a Provider. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a openWhiskService. 
 
-To create/register a new provider perform a POST-Request to: 
+To create/register a new openWhiskService perform a POST-Request to: 
 
 {{YOUR-HOST}}/providers 
 
@@ -34,7 +34,7 @@ with body
 ```
 
 with:
-- name: Unique name of your provider
+- name: Unique name of your openWhiskService
 - basicCredentials: username and password of your OpenWhisk/CloudFunctions-Namespace seperated by a ":"
 - baseUrl: Base-URL for your OpenWhisk-Server/CloudFunctions
 - namespace: Your unique namespace within your OpenWhisk-Server/CloudFunctions
@@ -60,8 +60,8 @@ from qiskit.circuit.random import random_circuit
 
 def main(params):
     try:
-        provider = IBMQ.enable_account(params['apiToken'])
-        backend = provider.get_backend(params['device'])
+        openWhiskService = IBMQ.enable_account(params['apiToken'])
+        backend = openWhiskService.get_backend(params['device'])
         qx = random_circuit(num_qubits=5, depth=4)
         transpiled = transpile(qx, backend=backend)
         job = backend.run(transpiled)
@@ -188,7 +188,7 @@ with parts:
 - **file** Python-File that follows structure requirements
 - **name** Unique name of your quantum application
 - **dockerImage** (optional) Name of a docker image that contains the necessary runtime to execute your quantum application. By default a python runtime with pre-installed qiskit is used
-- **providerName** Name of an existung provider that should be used for deployment of the quantum-application as an Action
+- **providerName** Name of an existung openWhiskService that should be used for deployment of the quantum-application as an Action
 
 The quantum applicaton will be automatically deployed as an action to the submitted Provider (your OpenWhisk-Server-/CloudFunctions-Namespace).
 

@@ -1,4 +1,4 @@
-package de.unistuttgart.iaas.faas.quantumservice.model.entity.provider;
+package de.unistuttgart.iaas.faas.quantumservice.model.entity.openwhiskservice;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Provider extends HasId {
+public class OpenWhiskService extends HasId {
 
     @Column(unique = true)
     private String name;

@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.HasId;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.quantumapplication.QuantumApplication;
-import de.unistuttgart.iaas.faas.quantumservice.model.entity.provider.Provider;
+import de.unistuttgart.iaas.faas.quantumservice.model.entity.openwhiskservice.OpenWhiskService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class ScriptExecution extends HasId {
     private String activationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Provider provider;
+    private OpenWhiskService openWhiskService;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private QuantumApplication quantumApplication;

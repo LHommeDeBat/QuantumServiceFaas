@@ -57,7 +57,7 @@ public class QueueSizeChecker {
                             payload.addEventPayloadProperties("device", deviceName);
                             // Add further data
                             payload.addAdditionalProperty("queueSize", queueStatus.getLengthQueue());
-                            // Fire event by calling appropriate OpenWhisk-Triggers on some OpenWhisk-Provider
+                            // Fire event by calling appropriate OpenWhisk-Triggers on some OpenWhisk-Service
                             triggerService.emitEvent(payload);
                         }
                     }

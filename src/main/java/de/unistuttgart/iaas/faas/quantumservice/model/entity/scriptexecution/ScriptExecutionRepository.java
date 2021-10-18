@@ -9,6 +9,6 @@ public interface ScriptExecutionRepository extends CrudRepository<ScriptExecutio
 
     Set<ScriptExecution> findAll();
     Set<ScriptExecution> findByStatus(ExecutionStatus status);
-    Set<ScriptExecution> findByProviderName(String name);
+    Set<ScriptExecution> findByOpenWhiskServiceName(String name);
     Set<ScriptExecution> findByQuantumApplicationName(String name);
 }

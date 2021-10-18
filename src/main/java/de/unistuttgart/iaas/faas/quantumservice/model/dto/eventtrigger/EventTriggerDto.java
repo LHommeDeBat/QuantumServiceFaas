@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.unistuttgart.iaas.faas.quantumservice.model.dto.ProviderDto;
+import de.unistuttgart.iaas.faas.quantumservice.model.dto.OpenWhiskServiceDto;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventType;
 import lombok.Data;
 import org.springframework.hateoas.server.core.Relation;
@@ -31,7 +31,7 @@ public class EventTriggerDto {
     private String name;
 
     @JsonIgnore
-    private ProviderDto provider;
+    private OpenWhiskServiceDto openWhiskService;
 
     @NotNull(message = "EventType must not be null!")
     private EventType eventType;

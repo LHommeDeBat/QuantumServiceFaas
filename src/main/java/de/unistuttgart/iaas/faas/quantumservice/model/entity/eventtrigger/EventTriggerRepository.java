@@ -24,7 +24,7 @@ public interface EventTriggerRepository extends CrudRepository<EventTrigger, UUI
     @Query("SELECT trigger FROM ExecutionResultEventTrigger trigger WHERE trigger.eventType = 'EXECUTION_RESULT' AND trigger.executedApplicationName = :quantumApplicationName")
     Set<EventTrigger> findAllExecutionResultTriggers(@Param("quantumApplicationName") String quantumApplicationName);
 
-    Set<EventTrigger> findByProviderName(String name);
+    Set<EventTrigger> findByOpenWhiskServiceName(String name);
 
     default Set<EventTrigger> findByEventType(EventPayload payload) {
         switch (payload.getEventType()) {

@@ -13,7 +13,7 @@ import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventP
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventTrigger;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.EventTriggerRepository;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.eventtrigger.QueueSizeEventTrigger;
-import de.unistuttgart.iaas.faas.quantumservice.model.entity.provider.Provider;
+import de.unistuttgart.iaas.faas.quantumservice.model.entity.openwhiskservice.OpenWhiskService;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.quantumapplication.QuantumApplication;
 import de.unistuttgart.iaas.faas.quantumservice.model.entity.quantumapplication.QuantumApplicationRepository;
 import de.unistuttgart.iaas.faas.quantumservice.model.exception.ElementAlreadyExistsException;
@@ -31,25 +31,25 @@ public class EventTriggerService {
 
     private final EventTriggerRepository repository;
     private final QuantumApplicationRepository quantumApplicationRepository;
-    private final ProviderService providerService;
+    private final OpenWhiskServiceService providerService;
     private final OpenWhiskClient openWhiskClient;
     private final ScriptExecutionService scriptExecutionService;
     private final IBMQProperties ibmqProperties;
 
     /**
-     * This method stores a new EventTrigger in the database and also creates a Trigger at the given OpenWhisk-Provider.
+     * This method stores a new EventTrigger in the database and also creates a Trigger at the given OpenWhisk-Service.
      *
      * @param eventTrigger EventTrigger that should be created
-     * @param providerName OpenWhisk-Provider that should be used
+     * @param openWhiskServiceName OpenWhisk-Service that should be used
      * @return createdTrigger
      */
-    public EventTrigger createEventTrigger(EventTrigger eventTrigger, String providerName) {
+    public EventTrigger createEventTrigger(EventTrigger eventTrigger, String openWhiskServiceName) {
         // Check if Trigger-Name is not already used
         checkForConflict(eventTrigger.getName());
         // Retrieve Provider from database
-        Provider existingProvider = providerService.findByName(providerName);
+        OpenWhiskService existingOpenWhiskService = providerService.findByName(openWhiskServiceName);
         // Fill EventTrigger-Object
-        eventTrigger.setProvider(existingProvider);
+        eventTrigger.setOpenWhiskService(existingOpenWhiskService);
 
         // Create Trigger at the OpenWhisk-Provider
         openWhiskClient.deployTriggerToFaas(eventTrigger);
@@ -95,7 +95,7 @@ public class EventTriggerService {
      */
     public ActivationResult fireEventTrigger(EventTrigger eventTrigger, EventPayload eventPayload) {
         ActivationResult result = openWhiskClient.fireTrigger(eventTrigger, eventPayload.getEventPayloadProperties());
-        OpenWhiskActivation activation = openWhiskClient.getActivation(eventTrigger.getProvider(), result.getActivationId());
+        OpenWhiskActivation activation = openWhiskClient.getActivation(eventTrigger.getOpenWhiskService(), result.getActivationId());
         scriptExecutionService.createScriptExecutionsFromLogs((Map<String, String>) activation.getResponse().getResult(), activation.getLogs(), activation.getStart());
         return result;
     }
@@ -120,7 +120,7 @@ public class EventTriggerService {
      * @return eventTriggers
      */
     public Set<EventTrigger> findByProviderName(String name) {
-        return repository.findByProviderName(name);
+        return repository.findByOpenWhiskServiceName(name);
     }
 
     /**
@@ -220,8 +220,8 @@ public class EventTriggerService {
      * @param quantumApplication QuantumApplication
      */
     private void checkConflictingNamespace(EventTrigger eventTrigger, QuantumApplication quantumApplication) {
-        String eventTriggerUniqueNamespace = eventTrigger.getProvider().getName() + eventTrigger.getProvider().getNamespace();
-        String quantumApplicationUniqueNamespace = quantumApplication.getProvider().getName() + quantumApplication.getProvider().getNamespace();
+        String eventTriggerUniqueNamespace = eventTrigger.getOpenWhiskService().getName() + eventTrigger.getOpenWhiskService().getNamespace();
+        String quantumApplicationUniqueNamespace = quantumApplication.getOpenWhiskService().getName() + quantumApplication.getOpenWhiskService().getNamespace();
         if (!eventTriggerUniqueNamespace.equals(quantumApplicationUniqueNamespace)) {
             throw new RuntimeException("Provider-Namespace of EventTrigger and QuantumApplication do not match!");
         }

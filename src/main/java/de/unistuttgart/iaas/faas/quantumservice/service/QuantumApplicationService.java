@@ -38,7 +38,7 @@ public class QuantumApplicationService {
     private final EventTriggerRepository eventTriggerRepository;
     private final ScriptExecutionRepository scriptExecutionRepository;
     private final JobRepository jobRepository;
-    private final ProviderService providerService;
+    private final OpenWhiskServiceService providerService;
     private final OpenWhiskClient openWhiskClient;
     private final IBMQProperties ibmqProperties;
 
@@ -59,7 +59,7 @@ public class QuantumApplicationService {
             // Create QuantumApplication and fill it with data
             QuantumApplication quantumApplication = new QuantumApplication();
             quantumApplication.setName(name);
-            quantumApplication.setProvider(providerService.findByName(providerName));
+            quantumApplication.setOpenWhiskService(providerService.findByName(providerName));
             quantumApplication.setCode(Base64.encodeBase64String(file.getBytes()));
             if (Objects.isNull(dockerImage)) {
                 dockerImage = "sykes360gtx/python-qiskit:latest";
@@ -91,7 +91,7 @@ public class QuantumApplicationService {
         ScriptExecution scriptExecution = new ScriptExecution();
         scriptExecution.setActivationId(result.getActivationId());
         scriptExecution.setQuantumApplication(quantumApplication);
-        scriptExecution.setProvider(quantumApplication.getProvider());
+        scriptExecution.setOpenWhiskService(quantumApplication.getOpenWhiskService());
         inputParams.put("apiToken", "**********");
         scriptExecution.setInputParams(new JSONObject(inputParams).toString());
         scriptExecution.setStatus(ExecutionStatus.RUNNING);
@@ -118,7 +118,7 @@ public class QuantumApplicationService {
      * @return providerApplications
      */
     public Set<QuantumApplication> findByProvider(String providerName) {
-        return repository.findByProviderName(providerName);
+        return repository.findByOpenWhiskServiceName(providerName);
     }
 
     /**

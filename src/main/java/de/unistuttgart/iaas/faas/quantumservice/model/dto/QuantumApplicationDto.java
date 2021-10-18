@@ -27,7 +27,7 @@ public class QuantumApplicationDto {
     private String notificationAddress;
 
     @JsonIgnore
-    private ProviderDto provider;
+    private OpenWhiskServiceDto openWhiskService;
 
     @JsonIgnore
     private Set<JobDto> jobs;
