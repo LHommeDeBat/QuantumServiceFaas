@@ -16,7 +16,7 @@ public class RootController {
     public ResponseEntity<RepresentationModel<?>> getRoot() {
         RepresentationModel<?> model = new RepresentationModel<>();
         model.add(WebMvcLinkBuilder.linkTo(methodOn(RootController.class).getRoot()).withSelfRel());
-        model.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskServices()).withRel("providers"));
+        model.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskServices()).withRel("openwhisk-services"));
         model.add(WebMvcLinkBuilder.linkTo(methodOn(QuantumApplicationController.class).getQuantumApplications()).withRel("quantumApplications"));
         model.add(WebMvcLinkBuilder.linkTo(methodOn(EventTriggerController.class).getEventTriggers()).withRel("eventTriggers"));
         return new ResponseEntity<>(model, HttpStatus.OK);
