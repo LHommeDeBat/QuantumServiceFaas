@@ -13,7 +13,7 @@ public interface QuantumApplicationRepository extends CrudRepository<QuantumAppl
 
     Optional<QuantumApplication> findByName(String name);
     Set<QuantumApplication> findAll();
-    Set<QuantumApplication> findByProviderName(String providerName);
+    Set<QuantumApplication> findByOpenWhiskServiceName(String openWhiskServiceName);
 
     @Query("SELECT e FROM QuantumApplication qa JOIN qa.eventTriggers e WHERE qa.name = :name")
     Set<EventTrigger> getQuantumApplicationTriggers(@Param("name") String name);

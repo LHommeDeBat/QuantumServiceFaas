@@ -18,7 +18,7 @@ public class ScriptExecutionDto {
     private String activationId;
 
     @JsonIgnore
-    private ProviderDto provider;
+    private OpenWhiskServiceDto openWhiskServiceDto;
 
     @JsonIgnore
     private QuantumApplicationDto quantumApplication;

@@ -63,7 +63,7 @@ public class ScriptExecutionService {
                 }
 
                 scriptExecution.setQuantumApplication(actionOptional.get());
-                scriptExecution.setProvider(actionOptional.get().getProvider());
+                scriptExecution.setOpenWhiskService(actionOptional.get().getOpenWhiskService());
                 scriptExecution.setInputParams(inputParamsJson.toString());
                 scriptExecution.setActivationId(object.getString("activationId"));
                 scriptExecution.setStatus(ExecutionStatus.RUNNING);
@@ -102,7 +102,7 @@ public class ScriptExecutionService {
      * @return providerScriptExecutions
      */
     public Set<ScriptExecution> findByProvider(String providerName) {
-        return repository.findByProviderName(providerName);
+        return repository.findByOpenWhiskServiceName(providerName);
     }
 
     /**

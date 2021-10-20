@@ -14,9 +14,10 @@ The QuantumService can be run by using Docker. For that, a docker-compose-templa
 
 ## Usage of OpenWhiskServices
 
+
 The QuantumService needs you to register a FaaS-Service that is based on OpenWhisk as a so called "OpenWhiskService". For that, you can either make an [IBM Cloud](https://cloud.ibm.com/login) account and use IBMs Cloud Functions as a OpenWhiskService. Alternatively you can run your own [OpenWhisk-Server](https://openwhisk.apache.org/documentation.html#openwhisk_deployment) and use it as a OpenWhiskService. 
 
-To create/register a new OpenWhiskService perform a POST-Request to: 
+To create/register a new OpenWhiskService perform a POST-Request to:
 
 {{YOUR-HOST}}/openwhisk-services 
 
@@ -34,6 +35,7 @@ with body
 ```
 
 with:
+
 - name: Unique name of your OpenWhiskService
 - basicCredentials: username and password of your OpenWhisk/CloudFunctions-Namespace seperated by a ":"
 - baseUrl: Base-URL for your OpenWhisk-Server/CloudFunctions
@@ -60,8 +62,8 @@ from qiskit.circuit.random import random_circuit
 
 def main(params):
     try:
-        provider = IBMQ.enable_account(params['apiToken'])
-        backend = provider.get_backend(params['device'])
+        openWhiskService = IBMQ.enable_account(params['apiToken'])
+        backend = openWhiskService.get_backend(params['device'])
         qx = random_circuit(num_qubits=5, depth=4)
         transpiled = transpile(qx, backend=backend)
         job = backend.run(transpiled)

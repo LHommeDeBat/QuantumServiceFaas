@@ -12,8 +12,8 @@ import org.springframework.hateoas.server.core.Relation;
 
 @Data
 @NoArgsConstructor
-@Relation(collectionRelation = "providers", itemRelation = "provider")
-public class ProviderDto {
+@Relation(collectionRelation = "openWhiskServices", itemRelation = "openWhiskService")
+public class OpenWhiskServiceDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
