@@ -35,10 +35,10 @@ public class OpenWhiskServiceService {
     private final OpenWhiskClient openWhiskClient;
 
     /**
-     * This method creates a new provider and stores inside the database.
+     * This method creates a new openWhiskService and stores inside the database.
      *
-     * @param openWhiskService Incoming provider that should be stored inside the database
-     * @return storedProvider Stored provider that has its ID generated
+     * @param openWhiskService Incoming openWhiskService that should be stored inside the database
+     * @return storedOpenWhiskService Stored openWhiskService that has its ID generated
      */
     public OpenWhiskService createOpenWhiskService(OpenWhiskService openWhiskService) {
         checkForConflict(openWhiskService.getName());
@@ -47,51 +47,52 @@ public class OpenWhiskServiceService {
     }
 
     /**
-     * This method returns all existing providers
-     * @return providers
+     * This method returns all existing openWhiskServices
+     * @return openWhiskServices
      */
     public Set<OpenWhiskService> findAll() {
         return repository.findAll();
     }
 
     /**
-     * This method returns a specific provider using a unique provider name.
+     * This method returns a specific openWhiskService using a unique openWhiskService name.
      *
-     * @param name Unique provider name
-     * @return provider
+     * @param name Unique openWhiskService name
+     * @return openWhiskService
      */
     public OpenWhiskService findByName(String name) {
-        return repository.findByName(name).orElseThrow(() -> new NoSuchElementException("No such provider exists!"));
+        return repository.findByName(name).orElseThrow(() -> new NoSuchElementException("No such openWhiskService exists!"));
     }
 
     /**
-     * This method deletes a exiting OpenWhisk service using its unique name.
+     * This method deletes an exiting OpenWhiskService using its unique name.
      *
-     * @param name Unique provider name
+     * @param name Unique openWhiskService name
      */
     public void deleteOpenWhiskService(String name) {
-        // Retrieve provider from database
+        // Retrieve openWhiskService from database
         OpenWhiskService openWhiskService = findByName(name);
-        // Remove all elements that belong to provider that will be deleted
-        deleteProviderElements(openWhiskService);
-        // Delete provider
+        // Remove all elements that belong to openWhiskService that will be deleted
+        deleteOpenWhiskServiceElements(openWhiskService);
+        // Delete openWhiskService
         repository.delete(openWhiskService);
     }
 
     /**
      * This method encodes the incoming basic authentication credentials as a Base64-String.
      *
-     * @param openWhiskService provider that needs his credentials encoded
+     * @param openWhiskService openWhiskService that needs his credentials encoded
      */
     private void encodeCredentials(OpenWhiskService openWhiskService) {
         openWhiskService.setBasicCredentials(Base64.encodeBase64String(openWhiskService.getBasicCredentials().getBytes()));
     }
 
     /**
-     * This method removes all elements that belong to a specific provider (EventTriggers, Jobs, QuantumApplications, etc.)
-     * @param openWhiskService used provider
+     * This method removes all elements that belong to a specific openWhiskService (EventTriggers, Jobs, QuantumApplications, etc.)
+     *
+     * @param openWhiskService used openWhiskService
      */
-    private void deleteProviderElements(OpenWhiskService openWhiskService) {
+    private void deleteOpenWhiskServiceElements(OpenWhiskService openWhiskService) {
         // Delete all rules from OpenWhisk
         for (EventTrigger eventTrigger : eventTriggerRepository.findByOpenWhiskServiceName(openWhiskService.getName())) {
             // Remove Rules from Open-Whisk
@@ -105,32 +106,32 @@ public class OpenWhiskServiceService {
         }
 
         // Delete all Event-Triggers and OpenWhisk-Triggers
-        Set<EventTrigger> providerEventTriggers = eventTriggerRepository.findByOpenWhiskServiceName(openWhiskService.getName());
-        eventTriggerRepository.deleteAll(providerEventTriggers);
-        providerEventTriggers.forEach(openWhiskClient::removeTriggerFromFaas);
+        Set<EventTrigger> openWhiskServiceTriggers = eventTriggerRepository.findByOpenWhiskServiceName(openWhiskService.getName());
+        eventTriggerRepository.deleteAll(openWhiskServiceTriggers);
+        openWhiskServiceTriggers.forEach(openWhiskClient::removeTriggerFromFaas);
 
         // Remove all Script-Executions and OpenWhisk-Activations
-        Set<ScriptExecution> providerScriptExecutions = scriptExecutionRepository.findByOpenWhiskServiceName(openWhiskService.getName());
-        scriptExecutionRepository.deleteAll(providerScriptExecutions);
+        Set<ScriptExecution> openWhiskServiceExecutions = scriptExecutionRepository.findByOpenWhiskServiceName(openWhiskService.getName());
+        scriptExecutionRepository.deleteAll(openWhiskServiceExecutions);
 
         // Remove all Quantum-Applications, Jobs and OpenWhisk-Actions
-        Set<QuantumApplication> providerQuantumApplications = quantumApplicationRepository.findByOpenWhiskServiceName(openWhiskService.getName());
-        for (QuantumApplication quantumApplication : providerQuantumApplications) {
+        Set<QuantumApplication> openWhiskServiceQuantumApplications = quantumApplicationRepository.findByOpenWhiskServiceName(openWhiskService.getName());
+        for (QuantumApplication quantumApplication : openWhiskServiceQuantumApplications) {
             // Remove Jobs
             Set<Job> actionJobs = jobRepository.findByQuantumApplicationName(quantumApplication.getName());
             jobRepository.deleteAll(actionJobs);
         }
-        quantumApplicationRepository.deleteAll(providerQuantumApplications);
-        providerQuantumApplications.forEach(openWhiskClient::removeActionFromFaas);
+        quantumApplicationRepository.deleteAll(openWhiskServiceQuantumApplications);
+        openWhiskServiceQuantumApplications.forEach(openWhiskClient::removeActionFromFaas);
     }
 
     /**
-     * This method checks if a provider with the given unique name already exists.
-     * @param name Provider-Name
+     * This method checks if a openWhiskService with the given unique name already exists.
+     * @param name PpenWhiskService-Name
      */
     private void checkForConflict(String name) {
         if (repository.findByName(name).isPresent()) {
-            throw new ElementAlreadyExistsException("Provider with name '" + name + "' already exists!");
+            throw new ElementAlreadyExistsException("OpenWhiskService with name '" + name + "' already exists!");
         }
     }
 }

@@ -51,6 +51,12 @@ public class MQConfiguration {
     private final EventTriggerService eventTriggerService;
     private final ObjectMapper objectMapper;
 
+    /**
+     * This method creates a bean of a JMS ConnectionFactory.
+     *
+     * @return mqQueueConnectionFactory MQConnectionFactory
+     * @throws JMSException Thrown if some JMS error occurs
+     */
     @Bean
     public ConnectionFactory mqQueueConnectionFactory() throws JMSException {
         MQQueueConnectionFactory mqQueueConnectionFactory = new MQQueueConnectionFactory();
@@ -63,6 +69,13 @@ public class MQConfiguration {
         return mqQueueConnectionFactory;
     }
 
+    /**
+     * This method uses a ConnectionFactory to create and start a JMS Connection.
+     *
+     * @param mqQueueConnectionFactory ConnectionFactory that should be used to create a connection.
+     * @return mqConnection MQConnection
+     * @throws JMSException Thrown if some JMS error occurs
+     */
     @Bean
     public Connection mqConnection(ConnectionFactory mqQueueConnectionFactory) throws JMSException {
         Connection connection = mqQueueConnectionFactory.createConnection(user, password);
@@ -70,16 +83,38 @@ public class MQConfiguration {
         return connection;
     }
 
+    /**
+     * This method uses a JMS Connection to create a JMS Session
+     *
+     * @param mqConnection Connection that should be used to create the session
+     * @return mqSession MQSession
+     * @throws JMSException Thrown if some JMS error occurs
+     */
     @Bean
     public Session mqSession(Connection mqConnection) throws JMSException {
         return mqConnection.createSession();
     }
 
+    /**
+     * This method uses a JMS Session to create a JMS Queue.
+     *
+     * @param mqSession Session that is used to create the queue
+     * @return mqQueue MQQueue
+     * @throws JMSException Thrown if some JMS error occurs
+     */
     @Bean
     public Queue mqQueue(Session mqSession) throws JMSException {
-        return  mqSession.createQueue(eventQueue);
+        return mqSession.createQueue(eventQueue);
     }
 
+    /**
+     * This method creates a JMS MessageConsumer that receives messages from a queue as a Event-Driven Consumer.
+     *
+     * @param mqSession Session that is used to create the message consumer
+     * @param mqQueue Queue that the consumer is listening to
+     * @return mqMessageConsumer MQMessageConsumer
+     * @throws JMSException
+     */
     @Bean
     public MessageConsumer mqMessageConsumer(Session mqSession, Queue mqQueue) throws JMSException {
         MessageConsumer mqMessageConsumer = mqSession.createConsumer(mqQueue);

@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class represents the REST-Controller of the ScriptExecutions. It handles all incoming REST-Requests
+ * for the ScriptExecutions.
+ */
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "script-executions")
@@ -26,27 +30,50 @@ public class ScriptExecutionController {
     private final ScriptExecutionService service;
     private final ScriptExecutionLinkAssembler linkAssembler;
 
+    /**
+     * This method returns all script executions.
+     *
+     * @return scriptExecutions
+     */
     @Transactional
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<ScriptExecutionDto>>> getScriptExecutions() {
         return new ResponseEntity<>(linkAssembler.toModel(service.findAll(), ScriptExecutionDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns a specific script execution with some id.
+     *
+     * @param id ID of the script execution
+     * @return scriptExecution
+     */
     @Transactional
     @GetMapping(value = "/{id}")
     public ResponseEntity<EntityModel<ScriptExecutionDto>> getScriptExecution(@PathVariable UUID id) {
         return new ResponseEntity<>(linkAssembler.toModel(service.findById(id), ScriptExecutionDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns all script executions of some OpenWhiskService.
+     *
+     * @param name Name of the OpenWhiskService
+     * @return scriptExecutions
+     */
     @Transactional
-    @GetMapping(value = "/provider/{name}")
-    public ResponseEntity<CollectionModel<EntityModel<ScriptExecutionDto>>> getScriptExecutionsByProvider(@PathVariable String name) {
-        return new ResponseEntity<>(linkAssembler.toModel(service.findByProvider(name), ScriptExecutionDto.class), HttpStatus.OK);
+    @GetMapping(value = "/openwhisk-service/{name}")
+    public ResponseEntity<CollectionModel<EntityModel<ScriptExecutionDto>>> getScriptExecutionsByOpenWhiskService(@PathVariable String name) {
+        return new ResponseEntity<>(linkAssembler.toModel(service.findByOpenWhiskService(name), ScriptExecutionDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns all script executions of some QuantumApplication.
+     *
+     * @param name Name of the QuantumApplication
+     * @return scriptExecutions
+     */
     @Transactional
     @GetMapping(value = "/quantum-application/{name}")
-    public ResponseEntity<CollectionModel<EntityModel<ScriptExecutionDto>>> getScriptExecutionsByAction(@PathVariable String name) {
+    public ResponseEntity<CollectionModel<EntityModel<ScriptExecutionDto>>> getScriptExecutionsByQuantumApplication(@PathVariable String name) {
         return new ResponseEntity<>(linkAssembler.toModel(service.findByQuantumApplication(name), ScriptExecutionDto.class), HttpStatus.OK);
     }
 }

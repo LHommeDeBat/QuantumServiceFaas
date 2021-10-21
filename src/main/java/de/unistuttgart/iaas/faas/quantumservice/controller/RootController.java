@@ -9,9 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * This class represents the REST-Controller of the Root. It handles all incoming REST-Requests
+ * for the Root.
+ */
 @RestController
 public class RootController {
 
+    /**
+     * This method returns all available links to other REST-Controllers.
+     *
+     * @return representationModel
+     */
     @GetMapping
     public ResponseEntity<RepresentationModel<?>> getRoot() {
         RepresentationModel<?> model = new RepresentationModel<>();

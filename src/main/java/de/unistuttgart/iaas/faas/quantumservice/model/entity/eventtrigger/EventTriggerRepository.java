@@ -13,7 +13,6 @@ public interface EventTriggerRepository extends CrudRepository<EventTrigger, UUI
 
     Optional<EventTrigger> findByName(String name);
     Set<EventTrigger> findAll();
-    Set<EventTrigger> findByEventType(EventType eventType);
 
     @Query("SELECT trigger FROM EventTrigger trigger WHERE trigger.eventType = 'BASIC' AND trigger.name = :name")
     Set<EventTrigger> findAllBasicTriggers(@Param("name") String name);

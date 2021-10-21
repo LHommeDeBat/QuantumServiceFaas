@@ -20,11 +20,11 @@ public class ScriptExecutionLinkAssembler extends GenericLinkAssembler<ScriptExe
     @Override
     public void addLinks(EntityModel<ScriptExecutionDto> resource) {
         resource.add(WebMvcLinkBuilder.linkTo(methodOn(ScriptExecutionController.class).getScriptExecution(getId(resource))).withSelfRel());
-        resource.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskService(getProviderName(resource))).withRel("openWhiskService"));
+        resource.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskService(getOpenWhiskServiceName(resource))).withRel("openWhiskService"));
         resource.add(WebMvcLinkBuilder.linkTo(methodOn(QuantumApplicationController.class).getQuantumApplication(getQuantumApplicationName(resource))).withRel("quantumApplication"));
     }
 
-    private String getProviderName(EntityModel<ScriptExecutionDto> resource) {
+    private String getOpenWhiskServiceName(EntityModel<ScriptExecutionDto> resource) {
         return resource.getContent().getOpenWhiskServiceDto().getName();
     }
 

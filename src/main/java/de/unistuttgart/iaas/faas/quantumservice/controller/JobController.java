@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class represents the REST-Controller of the Jobs. It handles all incoming REST-Requests
+ * for the Jobs.
+ */
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "jobs")
@@ -45,12 +49,24 @@ public class JobController {
         return new ResponseEntity<>(linkAssembler.toModel(service.findAll(statusFilter, pageable), JobDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns a specific job that has a specific id.
+     *
+     * @param id ID of the job
+     * @return job
+     */
     @Transactional
     @GetMapping(value = "/{id}")
     public ResponseEntity<EntityModel<JobDto>> getJob(@PathVariable UUID id) {
         return new ResponseEntity<>(linkAssembler.toModel(service.findById(id), JobDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns all jobs of a quantum application.
+     *
+     * @param name Name of the QuantumApplication
+     * @return jobs
+     */
     @Transactional
     @GetMapping(value = "/quantum-application/{name}")
     public ResponseEntity<CollectionModel<EntityModel<JobDto>>> getJobsByQuantumApplication(@PathVariable String name) {

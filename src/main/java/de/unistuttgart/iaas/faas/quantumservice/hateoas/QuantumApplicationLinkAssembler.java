@@ -21,7 +21,7 @@ public class QuantumApplicationLinkAssembler extends GenericLinkAssembler<Quantu
     public void addLinks(EntityModel<QuantumApplicationDto> resource) {
         resource.add(WebMvcLinkBuilder.linkTo(methodOn(QuantumApplicationController.class).getQuantumApplication(getName(resource))).withSelfRel());
         resource.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskService(getOpenWhiskServiceName(resource))).withRel("openWhiskService"));
-        resource.add(WebMvcLinkBuilder.linkTo((methodOn(ScriptExecutionController.class).getScriptExecutionsByAction(getName(resource)))).withRel("activations"));
+        resource.add(WebMvcLinkBuilder.linkTo((methodOn(ScriptExecutionController.class).getScriptExecutionsByQuantumApplication(getName(resource)))).withRel("activations"));
         resource.add(WebMvcLinkBuilder.linkTo((methodOn(JobController.class).getJobsByQuantumApplication(getName(resource)))).withRel("jobs"));
         resource.add(WebMvcLinkBuilder.linkTo((methodOn(EventTriggerController.class).getEventTriggersByQuantumApplication(getName(resource)))).withRel("eventTriggers"));
     }

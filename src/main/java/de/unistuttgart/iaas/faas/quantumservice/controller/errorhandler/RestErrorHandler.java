@@ -18,6 +18,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * This class is responsible for handling different kinds of exceptions on the Rest-Controller level.
+ */
 @ControllerAdvice
 public class RestErrorHandler {
 

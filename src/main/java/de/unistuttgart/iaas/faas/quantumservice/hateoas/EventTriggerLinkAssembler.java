@@ -17,10 +17,10 @@ public class EventTriggerLinkAssembler extends GenericLinkAssembler<EventTrigger
     @Override
     public void addLinks(EntityModel<EventTriggerDto> resource) {
         resource.add(WebMvcLinkBuilder.linkTo(methodOn(EventTriggerController.class).getEventTrigger(getName(resource))).withSelfRel());
-        resource.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskService(getProviderName(resource))).withRel("openWhiskService"));
+        resource.add(WebMvcLinkBuilder.linkTo(methodOn(OpenWhiskServiceController.class).getOpenWhiskService(getOpenWhiskServiceName(resource))).withRel("openWhiskService"));
     }
 
-    private String getProviderName(EntityModel<EventTriggerDto> resource) {
+    private String getOpenWhiskServiceName(EntityModel<EventTriggerDto> resource) {
         return resource.getContent().getOpenWhiskService().getName();
     }
 

@@ -31,7 +31,7 @@ public class EventTriggerService {
 
     private final EventTriggerRepository repository;
     private final QuantumApplicationRepository quantumApplicationRepository;
-    private final OpenWhiskServiceService providerService;
+    private final OpenWhiskServiceService openWhiskServiceService;
     private final OpenWhiskClient openWhiskClient;
     private final ScriptExecutionService scriptExecutionService;
     private final IBMQProperties ibmqProperties;
@@ -46,12 +46,12 @@ public class EventTriggerService {
     public EventTrigger createEventTrigger(EventTrigger eventTrigger, String openWhiskServiceName) {
         // Check if Trigger-Name is not already used
         checkForConflict(eventTrigger.getName());
-        // Retrieve Provider from database
-        OpenWhiskService existingOpenWhiskService = providerService.findByName(openWhiskServiceName);
+        // Retrieve OpenWhiskService from database
+        OpenWhiskService existingOpenWhiskService = openWhiskServiceService.findByName(openWhiskServiceName);
         // Fill EventTrigger-Object
         eventTrigger.setOpenWhiskService(existingOpenWhiskService);
 
-        // Create Trigger at the OpenWhisk-Provider
+        // Create Trigger at the OpenWhisk-Service
         openWhiskClient.deployTriggerToFaas(eventTrigger);
         // Store EventTrigger in database
         return repository.save(eventTrigger);
@@ -114,12 +114,12 @@ public class EventTriggerService {
     }
 
     /**
-     * This method returns all EventTriggers that belong to a specific provider.
+     * This method returns all EventTriggers that belong to a specific openWhiskService.
      *
-     * @param name Name of the used provider
+     * @param name Name of the used OpenWhiskService
      * @return eventTriggers
      */
-    public Set<EventTrigger> findByProviderName(String name) {
+    public Set<EventTrigger> findByOpenWhiskServiceName(String name) {
         return repository.findByOpenWhiskServiceName(name);
     }
 
@@ -147,14 +147,14 @@ public class EventTriggerService {
         // Get existing trigger
         EventTrigger existingEventTrigger = findByName(name);
 
-        // Delete Rules of the Trigger from the DB and from OpenWhisk-Provider
+        // Delete Rules of the Trigger from the DB and from OpenWhisk-Service
         deleteEventTriggerRules(existingEventTrigger);
 
         // Unregister all applications
         existingEventTrigger.setQuantumApplications(new HashSet<>());
         existingEventTrigger = repository.save(existingEventTrigger);
 
-        // Delete Trigger from DB and from OpenWhisk-Provider
+        // Delete Trigger from DB and from OpenWhisk-Service
         repository.delete(existingEventTrigger);
         openWhiskClient.removeTriggerFromFaas(existingEventTrigger);
     }
@@ -169,12 +169,12 @@ public class EventTriggerService {
         // Retrieve QuantumApplication and EventTrigger from database
         EventTrigger eventTrigger = findByName(eventTriggerName);
         QuantumApplication quantumApplication = quantumApplicationRepository.findByName(quantumApplicationName).orElseThrow(() -> new NoSuchElementException("There is no QuantumApplication with name=" + quantumApplicationName + "!"));
-        // Check if both objects are using the same Provider and Namespace
+        // Check if both objects are using the same OpenWhisk-Service and Namespace
         checkConflictingNamespace(eventTrigger, quantumApplication);
         // Link Application with Trigger
         eventTrigger.getQuantumApplications().add(quantumApplication);
         repository.save(eventTrigger);
-        // Create a Rule in OpenWhisk-Provider to link the Action with the Trigger
+        // Create a Rule in OpenWhisk-Service to link the Action with the Trigger
         openWhiskClient.deployRuleToFaas(eventTrigger, quantumApplication);
     }
 
@@ -191,11 +191,11 @@ public class EventTriggerService {
         // Unlink Application from Trigger
         eventTrigger.getQuantumApplications().removeIf(application -> application.getName().equals(quantumApplicationName));
         repository.save(eventTrigger);
-        // Remove Rule from OpenWhisk-Provider to unlink Action and Trigger
+        // Remove Rule from OpenWhisk-Service to unlink Action and Trigger
         openWhiskClient.removeRuleFromFaas(eventTrigger, quantumApplication);
     }
 
-    // This method removes all Rules from the OpenWhisk-Provider
+    // This method removes all Rules from the OpenWhisk-Service
     private void deleteEventTriggerRules(EventTrigger eventTrigger) {
         for (QuantumApplication quantumApplication : eventTrigger.getQuantumApplications()) {
             openWhiskClient.removeRuleFromFaas(eventTrigger, quantumApplication);
@@ -214,7 +214,7 @@ public class EventTriggerService {
     }
 
     /**
-     * This method checks if a EventTrigger and QuantumApplication belong to the same Namespace of the same Openwhisk-Provider.
+     * This method checks if a EventTrigger and QuantumApplication belong to the same Namespace of the same Openwhisk-Service.
      *
      * @param eventTrigger EventTrigger
      * @param quantumApplication QuantumApplication
@@ -223,7 +223,7 @@ public class EventTriggerService {
         String eventTriggerUniqueNamespace = eventTrigger.getOpenWhiskService().getName() + eventTrigger.getOpenWhiskService().getNamespace();
         String quantumApplicationUniqueNamespace = quantumApplication.getOpenWhiskService().getName() + quantumApplication.getOpenWhiskService().getNamespace();
         if (!eventTriggerUniqueNamespace.equals(quantumApplicationUniqueNamespace)) {
-            throw new RuntimeException("Provider-Namespace of EventTrigger and QuantumApplication do not match!");
+            throw new RuntimeException("Service-Namespace of EventTrigger and QuantumApplication do not match!");
         }
     }
 

@@ -21,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class represents the REST-Controller of the OpenWhiskService. It handles all incoming REST-Requests
+ * for the OpenWhiskService.
+ */
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "openwhisk-services")
@@ -30,6 +34,12 @@ public class OpenWhiskServiceController {
     private final OpenWhiskServiceService service;
     private final OpenWhiskServiceLinkAssembler linkAssembler;
 
+    /**
+     * This method creates a new OpenWhiskService.
+     *
+     * @param dto OpenWhiskService data
+     * @return createdOpenWhiskService
+     */
     @Transactional
     @PostMapping
     public ResponseEntity<EntityModel<OpenWhiskServiceDto>> createOpenWhiskService(@Validated @RequestBody OpenWhiskServiceDto dto) {
@@ -37,18 +47,35 @@ public class OpenWhiskServiceController {
         return new ResponseEntity<>(linkAssembler.toModel(createdOpenWhiskService, OpenWhiskServiceDto.class), HttpStatus.CREATED);
     }
 
+    /**
+     * This method returns all OpenWhiskServices.
+     *
+     * @return openWhiskServices
+     */
     @Transactional
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<OpenWhiskServiceDto>>> getOpenWhiskServices() {
         return new ResponseEntity<>(linkAssembler.toModel(service.findAll(), OpenWhiskServiceDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns a specific OpenWhiskService with a given name.
+     *
+     * @param name Name of the OpenWhiskService
+     * @return openWhiskService
+     */
     @Transactional
     @GetMapping(value = "/{name}")
     public ResponseEntity<EntityModel<OpenWhiskServiceDto>> getOpenWhiskService(@PathVariable String name) {
         return new ResponseEntity<>(linkAssembler.toModel(service.findByName(name), OpenWhiskServiceDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method deletes a specific OpenWhiskService with a given name.
+     *
+     * @param name Name of the OpenWhiskService
+     * @return Void
+     */
     @Transactional
     @DeleteMapping(value = "/{name}")
     public ResponseEntity<Void> deleteOpenWhiskService(@PathVariable String name) {

@@ -38,28 +38,28 @@ public class QuantumApplicationService {
     private final EventTriggerRepository eventTriggerRepository;
     private final ScriptExecutionRepository scriptExecutionRepository;
     private final JobRepository jobRepository;
-    private final OpenWhiskServiceService providerService;
+    private final OpenWhiskServiceService openWhiskServiceService;
     private final OpenWhiskClient openWhiskClient;
     private final IBMQProperties ibmqProperties;
 
     /**
      * This method takes submitted Quantum-Application data, creates a QuantumApplication and then creates an equivalent
-     * Action at the OpenWhisk-Provider.
+     * Action at the OpenWhisk-Service.
      *
      * @param file Python-File containing Qiskit code
      * @param name Name of the QuantumApplication
      * @param dockerImage Tagged docker image name
-     * @param providerName Name of the OpenWhisk-Provider that should be used for execution the QuantumApplication
+     * @param openWhiskServiceName Name of the OpenWhisk-Service that should be used for execution the QuantumApplication
      * @return createdQuantumApplication
      */
-    public QuantumApplication createQuantumApplication(MultipartFile file, String name, String dockerImage, String notificationAddress, String providerName) {
+    public QuantumApplication createQuantumApplication(MultipartFile file, String name, String dockerImage, String notificationAddress, String openWhiskServiceName) {
         try {
             // Check if QuantumApplication with given name already exists
             checkForConflict(name);
             // Create QuantumApplication and fill it with data
             QuantumApplication quantumApplication = new QuantumApplication();
             quantumApplication.setName(name);
-            quantumApplication.setOpenWhiskService(providerService.findByName(providerName));
+            quantumApplication.setOpenWhiskService(openWhiskServiceService.findByName(openWhiskServiceName));
             quantumApplication.setCode(Base64.encodeBase64String(file.getBytes()));
             if (Objects.isNull(dockerImage)) {
                 dockerImage = "sykes360gtx/python-qiskit:latest";
@@ -69,7 +69,7 @@ public class QuantumApplicationService {
 
             // Save QuantumApplication
             QuantumApplication createdQuantumApplication = repository.save(quantumApplication);
-            // Create an Action inside the OpenWhisk-Provider
+            // Create an Action inside the OpenWhisk-Service
             openWhiskClient.deployActionToFaas(quantumApplication);
             return createdQuantumApplication;
         } catch (IOException e) {
@@ -112,13 +112,13 @@ public class QuantumApplicationService {
     }
 
     /**
-     * This method returns all QuantumApplications that belong to a specific OpenWhisk-Provider.
+     * This method returns all QuantumApplications that belong to a specific OpenWhisk-Service.
      *
-     * @param providerName Unique name of the provider
-     * @return providerApplications
+     * @param openWhiskServiceName Unique name of the OpenWhiskService
+     * @return openWhiskServiceApplications
      */
-    public Set<QuantumApplication> findByProvider(String providerName) {
-        return repository.findByOpenWhiskServiceName(providerName);
+    public Set<QuantumApplication> findByOpenWhiskService(String openWhiskServiceName) {
+        return repository.findByOpenWhiskServiceName(openWhiskServiceName);
     }
 
     /**
@@ -133,7 +133,7 @@ public class QuantumApplicationService {
             event.getQuantumApplications().removeIf(application -> application.getName().equals(name));
             eventTriggerRepository.save(event);
         }
-        // Delete Rules of the Action from the DB and from OpenWhisk-Provider
+        // Delete Rules of the Action from the DB and from OpenWhisk-Service
         deleteQuantumApplicationElements(quantumApplication);
         repository.delete(quantumApplication);
         openWhiskClient.removeActionFromFaas(quantumApplication);
@@ -145,7 +145,7 @@ public class QuantumApplicationService {
      * @param quantumApplication QuantumApplication which elements should be deleted
      */
     private void deleteQuantumApplicationElements(QuantumApplication quantumApplication) {
-        // Remove all Rules from OpenWhisk-Provider
+        // Remove all Rules from OpenWhisk-Service
         for (EventTrigger eventTrigger : quantumApplication.getEventTriggers()) {
             openWhiskClient.removeRuleFromFaas(eventTrigger, quantumApplication);
         }

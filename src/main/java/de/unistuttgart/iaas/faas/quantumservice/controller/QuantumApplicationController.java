@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * This class represents the REST-Controller of the QuantumApplications. It handles all incoming REST-Requests
+ * for the QuantumApplications.
+ */
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "quantum-applications")
@@ -32,42 +36,82 @@ public class QuantumApplicationController {
     private final QuantumApplicationService service;
     private final QuantumApplicationLinkAssembler linkAssembler;
 
+    /**
+     * This method creates a new QuantumApplication
+     *
+     * @param file Python-File containing the Qiskit-Function
+     * @param name Name of the QuantumApplication
+     * @param dockerImage Optional dockerImage name that should be used for execution the function
+     * @param notificationAddress Optional notification address to notify some queue when status changes occur (currently not used)
+     * @param openWhiskServiceName OpenWhiskService Name
+     * @return createdQuantumApplication
+     */
     @Transactional
     @PostMapping
     public ResponseEntity<EntityModel<QuantumApplicationDto>> createQuantumApplication(@RequestParam MultipartFile file,
                                                                                        @RequestParam String name,
                                                                                        @RequestParam(required = false) String dockerImage,
                                                                                        @RequestParam(required = false) String notificationAddress,
-                                                                                       @RequestParam String providerName) {
-        QuantumApplication createdQuantumApplication = service.createQuantumApplication(file, name, dockerImage, notificationAddress, providerName);
+                                                                                       @RequestParam String openWhiskServiceName) {
+        QuantumApplication createdQuantumApplication = service.createQuantumApplication(file, name, dockerImage, notificationAddress, openWhiskServiceName);
         return new ResponseEntity<>(linkAssembler.toModel(createdQuantumApplication, QuantumApplicationDto.class), HttpStatus.CREATED);
     }
 
+    /**
+     * This method invokes a specific quantum application with specific input parameters.
+     *
+     * @param name Name of QuantumApplication
+     * @param inputParams Parameters to be submitted as input
+     * @return Void
+     */
     @Transactional
     @PostMapping(value = "/{name}")
-    public ResponseEntity<EntityModel<QuantumApplicationDto>> invokeQuantumApplication(@PathVariable String name, @RequestBody(required = false) Map<String, Object> inputParams) {
+    public ResponseEntity<Void> invokeQuantumApplication(@PathVariable String name, @RequestBody(required = false) Map<String, Object> inputParams) {
         service.invokeQuantumApplication(name, inputParams);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * This method returns all QuantumApplications.
+     *
+     * @return quantumApplications
+     */
     @Transactional
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<QuantumApplicationDto>>> getQuantumApplications() {
         return new ResponseEntity<>(linkAssembler.toModel(service.findAll(), QuantumApplicationDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns a single quantum application.
+     *
+     * @param name Name of the QuantumApplication
+     * @return quantumApplication
+     */
     @Transactional
     @GetMapping(value = "/{name}")
     public ResponseEntity<EntityModel<QuantumApplicationDto>> getQuantumApplication(@PathVariable String name) {
         return new ResponseEntity<>(linkAssembler.toModel(service.findByName(name), QuantumApplicationDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method returns all quantum applications of a OpenWhiskService
+     *
+     * @param name Name of the OpenWhiskService
+     * @return quantumApplications
+     */
     @Transactional
-    @GetMapping(value = "/provider/{name}")
-    public ResponseEntity<CollectionModel<EntityModel<QuantumApplicationDto>>> getQuantumApplicationsByProvider(@PathVariable String name) {
-        return new ResponseEntity<>(linkAssembler.toModel(service.findByProvider(name), QuantumApplicationDto.class), HttpStatus.OK);
+    @GetMapping(value = "/openwhisk-service/{name}")
+    public ResponseEntity<CollectionModel<EntityModel<QuantumApplicationDto>>> getQuantumApplicationsByOpenWhiskService(@PathVariable String name) {
+        return new ResponseEntity<>(linkAssembler.toModel(service.findByOpenWhiskService(name), QuantumApplicationDto.class), HttpStatus.OK);
     }
 
+    /**
+     * This method deletes a specific quantum application.
+     *
+     * @param name Name of the QuantumApplication
+     * @return Void
+     */
     @Transactional
     @DeleteMapping(value = "/{name}")
     public ResponseEntity<Void> deleteQuantumApplication(@PathVariable String name) {

@@ -96,13 +96,13 @@ public class ScriptExecutionService {
     }
 
     /**
-     * This method returns ScriptExectutions that belong to a specific namespace of a specific provider.
+     * This method returns ScriptExectutions that belong to a specific namespace of a specific OpenWhiskService.
      *
-     * @param providerName Name of the provider
-     * @return providerScriptExecutions
+     * @param openWhiskServiceName Name of the OpenWhiskService
+     * @return openWhiskServiceScriptExecutions
      */
-    public Set<ScriptExecution> findByProvider(String providerName) {
-        return repository.findByOpenWhiskServiceName(providerName);
+    public Set<ScriptExecution> findByOpenWhiskService(String openWhiskServiceName) {
+        return repository.findByOpenWhiskServiceName(openWhiskServiceName);
     }
 
     /**

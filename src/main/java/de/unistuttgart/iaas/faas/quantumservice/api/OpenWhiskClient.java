@@ -35,6 +35,11 @@ public class OpenWhiskClient {
 
     private final RestTemplate restTemplate;
 
+    /**
+     * This method deploys an QuantumApplication equivalent action to the given OpenWhisk-Service.
+     *
+     * @param quantumApplication quantumApplication to be deployed as an action
+     */
     public void deployActionToFaas(QuantumApplication quantumApplication) {
         OpenWhiskAction openWhiskAction = createOpenWhiskAction(quantumApplication);
         String url = quantumApplication.getOpenWhiskService().getBaseUrl() + "/namespaces/" + quantumApplication.getOpenWhiskService().getNamespace() + "/actions/" + quantumApplication.getName() + "?overwrite=true";
@@ -42,18 +47,34 @@ public class OpenWhiskClient {
         restTemplate.exchange(url, HttpMethod.PUT, entity, Object.class);
     }
 
+    /**
+     * This method invokes an Action that is deployed on some OpenWhisk-Service.
+     *
+     * @param quantumApplication quantumApplication that is related to the action that should be invoked
+     * @param functionParameters Parameters that should be passed to the action as input
+     */
     public ActivationResult invokeAction(QuantumApplication quantumApplication, Object functionParameters) {
         String url = quantumApplication.getOpenWhiskService().getBaseUrl() + "/namespaces/" + quantumApplication.getOpenWhiskService().getNamespace() + "/actions/" + quantumApplication.getName();
         HttpEntity<Object> entity = new HttpEntity<>(functionParameters, generateHeaders(quantumApplication.getOpenWhiskService()));
         return restTemplate.exchange(url, HttpMethod.POST, entity, ActivationResult.class).getBody();
     }
 
+    /**
+     * This method removes an action that is related to a quantum application from a OpenWhisk-Service
+     *
+     * @param quantumApplication Related quantum application of the action that should be removed
+     */
     public void removeActionFromFaas(QuantumApplication quantumApplication) {
         String url = quantumApplication.getOpenWhiskService().getBaseUrl() + "/namespaces/" + quantumApplication.getOpenWhiskService().getNamespace() + "/actions/" + quantumApplication.getName();
         HttpEntity<Object> entity = new HttpEntity<>(generateHeaders(quantumApplication.getOpenWhiskService()));
         restTemplate.exchange(url, HttpMethod.DELETE, entity, Object.class);
     }
 
+    /**
+     * This method creates a Trigger at a OpenWhisk-Service.
+     *
+     * @param eventTrigger EventTrigger that should be created as a Trigger at the OpenWhisk-Service
+     */
     public void deployTriggerToFaas(EventTrigger eventTrigger) {
         OpenWhiskTrigger openWhiskTrigger = createOpenWhiskTrigger(eventTrigger);
         String url = eventTrigger.getOpenWhiskService().getBaseUrl() + "/namespaces/" + eventTrigger.getOpenWhiskService().getNamespace() + "/triggers/" + eventTrigger.getName() + "?overwrite=true";
@@ -61,12 +82,23 @@ public class OpenWhiskClient {
         restTemplate.exchange(url, HttpMethod.PUT, entity, Object.class);
     }
 
+    /**
+     * This method removes a Trigger from a OpenWhisk-Service.
+     *
+     * @param eventTrigger Related EventTrigger of the Trigger that should be removed from the OpenWhisk-Service
+     */
     public void removeTriggerFromFaas(EventTrigger eventTrigger) {
         String url = eventTrigger.getOpenWhiskService().getBaseUrl() + "/namespaces/" + eventTrigger.getOpenWhiskService().getNamespace() + "/triggers/" + eventTrigger.getName();
         HttpEntity<Object> entity = new HttpEntity<>(generateHeaders(eventTrigger.getOpenWhiskService()));
         restTemplate.exchange(url, HttpMethod.DELETE, entity, Object.class);
     }
 
+    /**
+     * This method fires a Trigger at a OpenWhisk-Service.
+     *
+     * @param eventTrigger Related EventTrigger of the Trigger that should be fired
+     * @param functionParameters Parameters that should be passed to the trigger as input
+     */
     public ActivationResult fireTrigger(EventTrigger eventTrigger, Object functionParameters) {
         HttpEntity<Object> entity = new HttpEntity<>(functionParameters, generateHeaders(eventTrigger.getOpenWhiskService()));
         ResponseEntity<ActivationResult> response = restTemplate.postForEntity(eventTrigger.getOpenWhiskService().getBaseUrl() + "/namespaces/" + eventTrigger.getOpenWhiskService().getNamespace() + "/triggers/" + eventTrigger.getName(), entity, ActivationResult.class);
@@ -76,6 +108,13 @@ public class OpenWhiskClient {
         return  response.getBody();
     }
 
+    /**
+     * This method creates a rule at the OpenWhisk-Service.
+     * The created rule links the trigger and action of the given event trigger and quantum application
+     *
+     * @param eventTrigger Related EventTrigger of the Trigger that should be part of the new rule
+     * @param quantumApplication Related QuantumApplication of the Action that should be part of the new rule
+     */
     public void deployRuleToFaas(EventTrigger eventTrigger, QuantumApplication quantumApplication) {
         OpenWhiskRule openWhiskRule = createOpenWhiskRule(eventTrigger, quantumApplication);
         // Create or Update the Rule
@@ -84,19 +123,25 @@ public class OpenWhiskClient {
         restTemplate.exchange(url + "?overwrite=true", HttpMethod.PUT, entity, Object.class);
     }
 
+    /**
+     * This method removes a rule from the OpenWhisk-Service.
+     *
+     * @param eventTrigger Related EventTrigger of the Trigger that is part of the existing rule
+     * @param quantumApplication Related QuantumApplication of the Action that is part of the existing rule
+     */
     public void removeRuleFromFaas(EventTrigger eventTrigger, QuantumApplication quantumApplication) {
         String url = quantumApplication.getOpenWhiskService().getBaseUrl() + "/namespaces/" + quantumApplication.getOpenWhiskService().getNamespace() + "/rules/" + eventTrigger.getName() + "-" + quantumApplication.getName();
         HttpEntity<Object> entity = new HttpEntity<>(generateHeaders(quantumApplication.getOpenWhiskService()));
         restTemplate.exchange(url, HttpMethod.DELETE, entity, Object.class);
     }
 
-    /* public void toggleRuleStatus(Rule rule) {
-        ToggleRuleStatusRequest toggleRequest = new ToggleRuleStatusRequest(rule.isActive() ? "active" : "inactive");
-        String url = rule.getProvider().getBaseUrl() + "/namespaces/" + rule.getProvider().getNamespace() + "/rules/" + rule.getName();
-        HttpEntity<ToggleRuleStatusRequest> entity = new HttpEntity<>(toggleRequest, generateHeaders(rule.getProvider()));
-        restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-    } */
-
+    /**
+     * This method returns an activation from an OpenWhisk-Service.
+     *
+     * @param openWhiskService Registered OpenWhisk-Service
+     * @param activationId Activation-ID of the activation that should be returned
+     * @return openWhiskActivation Activation that belongs to the given activation id
+     */
     public OpenWhiskActivation getActivation(OpenWhiskService openWhiskService, String activationId) {
         String url = openWhiskService.getBaseUrl() + "/namespaces/" + openWhiskService.getNamespace() + "/activations/" + activationId;
         HttpEntity<Object> entity = new HttpEntity<>(generateHeaders(openWhiskService));
